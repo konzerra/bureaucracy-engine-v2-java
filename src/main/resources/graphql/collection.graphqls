@@ -1,0 +1,13 @@
+
+extend type Query {
+    collections: [Collection]
+}
+
+type Collection {
+    id: ID!
+    name: String!
+    description: String!
+    owner: String!
+    docs: [DocInfo!]!
+}
+

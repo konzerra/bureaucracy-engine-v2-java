@@ -1,0 +1,60 @@
+
+
+type Query {
+    collectionsWithPagination(pageSize: Int!, pageNumber: Int!): [Collection]
+    signin(email: String!, password: String!): JwtDetails
+}
+
+
+type Mutation {
+    saveCollection(saveInput: CollectionSaveInput!): Collection
+}
+
+
+input CollectionSaveInput{
+    name: String!
+    description: String!
+}
+type Doc {
+    id: ID!
+    title: String!
+    version: String!
+    collection: String!
+    createdAt: String!
+    updatedAt: String!
+    content: [DocContent!]!
+    attachedDocs: [DocInfo!]!
+    previousVersions: [DocInfo!]!
+}
+
+type DocInfo {
+    title: String!
+    docId: String!
+}
+type DocContent {
+    heading: String!
+    paragraph: String!
+    note: String!
+}
+
+type JwtDetails {
+    userId: String!
+    email: String!
+    token: String!
+    issuedAt: String!
+    expiresAt: String!
+    roles: [String]!
+}
+
+type SignupInput{
+    name: String,
+    email: String,
+    password: String,
+}
+
+
+
+
+
+
+
