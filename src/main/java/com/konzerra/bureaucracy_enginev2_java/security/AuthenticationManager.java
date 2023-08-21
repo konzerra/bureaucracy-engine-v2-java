@@ -17,7 +17,6 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        System.out.println(principal.getName()+ principal.getId());
         return userRepository.findUserByEmail(principal.getName())
                 .filter(User::isEnabled)
                 .switchIfEmpty(Mono.error(new UnauthorizedException("user disabled")))

@@ -1,7 +1,7 @@
 
 extend type Query {
     collections: [Collection]!
-    collectionsWithPagination(pageSize: Int!, pageNumber: Int!): [Collection]!
+    collectionsPaginated( pageNumber: Int!, pageSize: Int!): [Collection]!
 }
 
 extend type Mutation {

@@ -10,19 +10,19 @@ import reactor.core.publisher.Mono;
 @Component
 public class CollectionMapperImpl implements CollectionMapper {
     @Override
-    public Mono<Collection> toModel(CollectionUpdateInput updateInput) {
-        return Mono.just(Collection.builder()
-                        .id(updateInput.id())
-                        .description(updateInput.description())
-                        .name(updateInput.name())
-                .build());
+    public Mono<Collection> toUpdatedModel(Collection collection, CollectionUpdateInput updateInput) {
+
+        collection.setName(updateInput.name());
+        collection.setDescription(updateInput.description());
+        return Mono.just(collection);
     }
 
     @Override
-    public Mono<Collection> toModel(CollectionSaveInput saveInput) {
+    public Mono<Collection> toModel(CollectionSaveInput saveInput, String userName) {
         return Mono.just(Collection.builder()
                 .description(saveInput.description())
                 .name(saveInput.name())
+                .owner(userName)
                 .build());
     }
 }

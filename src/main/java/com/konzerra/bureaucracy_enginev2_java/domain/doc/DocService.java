@@ -1,26 +1,26 @@
 package com.konzerra.bureaucracy_enginev2_java.domain.doc;
 
-import com.konzerra.bureaucracy_enginev2_java.domain.doc.dto.DocSaveDto;
-import com.konzerra.bureaucracy_enginev2_java.domain.doc.dto.DocUpdateDto;
+import com.konzerra.bureaucracy_enginev2_java.domain.doc.dto.DocSaveInput;
+import com.konzerra.bureaucracy_enginev2_java.domain.doc.dto.DocUpdateInput;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface DocService {
 
-    // Save a new Collection
-    Mono<Doc> save(DocSaveDto saveDto);
 
-    // Update an existing Collection
-    Mono<Doc> update(DocUpdateDto updateDto);
+    Mono<Doc> save(DocSaveInput saveInput);
 
-    // Delete a Collection by ID
+
+    Mono<Doc> update(DocUpdateInput updateInput);
+
+
     Mono<Void> deleteById(String id);
 
-    // Find a Collection by ID
+
     Mono<Doc> findById(String id);
 
-    // Find all Docs with pagination
-    Flux<Doc> findAll(int pageSize, int pageNumber);
 
-    Mono<DocInfo> linkDoc(String docId);
+    Flux<Doc> search(String collectionId);
+
+    Mono<Doc> linkDoc(String targetDocId, String docId);
 }

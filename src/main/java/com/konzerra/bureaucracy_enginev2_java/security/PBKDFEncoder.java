@@ -39,7 +39,6 @@ public class PBKDFEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        System.out.println("Comaparing passwords");
         return encode(rawPassword).equals(encodedPassword);
     }
 }

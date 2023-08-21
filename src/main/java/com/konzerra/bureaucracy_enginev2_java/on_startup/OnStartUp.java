@@ -30,15 +30,15 @@ public class OnStartUp implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         findOrCreateRole(RoleNames.ADMIN.getName()).subscribe();
         findOrCreateRole(RoleNames.USER.getName()).subscribe();
-        createUserOrDoNothing().subscribe();
+        createUserOrDoNothing("konzerra@gmail.com").subscribe();
     }
-    private Mono<User> createUserOrDoNothing() {
-        return userRepository.findUserByEmail("konzerra@gmail.com")
+    private Mono<User> createUserOrDoNothing(String email) {
+        return userRepository.findUserByEmail(email)
                 .switchIfEmpty(
-                        findOrCreateRole(RoleNames.ADMIN.getName())
+                        findOrCreateRole(RoleNames.USER.getName())
                                 .flatMap(role -> userRepository.save(
                                         User.builder()
-                                                .email("konzerra@gmail.com")
+                                                .email(email)
                                                 .password(passwordEncoder.encode("123456"))
                                                 .roles(Collections.singletonList(role))
                                                 .build()

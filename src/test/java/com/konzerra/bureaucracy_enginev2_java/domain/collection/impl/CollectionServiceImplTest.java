@@ -117,7 +117,7 @@ class CollectionServiceImplTest {
     }
 
     @Test
-    void testFindAll() {
+    void testFindpaginated() {
         // This test method demonstrates how to test the paginated findAll method.
 
         int pageSize = 2;

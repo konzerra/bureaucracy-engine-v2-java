@@ -9,62 +9,54 @@ import com.konzerra.bureaucracy_enginev2_java.domain.collection.CollectionServic
 import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionUpdateInput;
 import com.konzerra.bureaucracy_enginev2_java.exception.ApiException;
 import com.konzerra.bureaucracy_enginev2_java.exception.ErrorCode;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-
 @Service
 public class CollectionServiceImpl implements CollectionService {
 
-    private final CollectionRepository collectionRepository;
+    private final CollectionRepository repository;
     private final AuthUtil authUtil;
 
     private final CollectionMapper mapper;
 
-    public CollectionServiceImpl(CollectionRepository collectionRepository, AuthUtil authUtil, CollectionMapper mapper) {
-        this.collectionRepository = collectionRepository;
+    public CollectionServiceImpl(CollectionRepository repository, AuthUtil authUtil, CollectionMapper mapper) {
+        this.repository = repository;
         this.authUtil = authUtil;
         this.mapper = mapper;
     }
 
     @Override
-    public Mono<Collection> save(CollectionSaveInput saveDto) {
+    public Mono<Collection> save(CollectionSaveInput saveInput) {
         return authUtil.getUserName()
-                .flatMap(userName -> collectionRepository.save(new Collection(
-                        null,
-                        saveDto.name(),
-                        saveDto.description(),
-                        userName,
-                        Collections.emptyList()
-                )));
+                .flatMap(userName ->
+                        mapper.toModel(saveInput, userName).flatMap(repository::save)
+                );
     }
 
 
 
     @Override
     public Mono<Collection> update(CollectionUpdateInput updateInput) {
-        return collectionRepository.findById(updateInput.id()).flatMap(collection -> {
-            return authUtil.isCurrentUser(collection.getOwner())
-                    .then(mapper.toModel(updateInput)
-                            .flatMap(collectionRepository::save)
-                            .switchIfEmpty(Mono.error(new ApiException("could not update", ErrorCode.UPDATE_FAILED)))
-                    );
-        });
+        return repository.findById(updateInput.id())
+                .flatMap(collection -> authUtil.isCurrentUser(collection.getOwner())
+                .then(mapper.toUpdatedModel(collection, updateInput)
+                        .flatMap(repository::save)
+                        .switchIfEmpty(Mono.error(new ApiException("could not update", ErrorCode.UPDATE_FAILED)))
+                ));
     }
 
     @Override
     public Mono<Void> deleteById(String id) {
-        return collectionRepository.findById(id)
+        return repository.findById(id)
                 .flatMap(collection -> authUtil.isCurrentUser(collection.getOwner())
-                .then(collectionRepository.deleteById(id)));
+                .then(repository.deleteById(id)));
     }
 
     @Override
     public Mono<Collection> findById(String id) {
-        return collectionRepository.findById(id)
+        return repository.findById(id)
                 .flatMap(collection -> authUtil.isCurrentUser(collection.getOwner())
                         .then(Mono.just(collection))
                 );
@@ -73,7 +65,7 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public Flux<Collection> findAll() {
         return authUtil.getUserName()
-                .flatMapMany(collectionRepository::findAllByOwner);
+                .flatMapMany(repository::findAllByOwner);
     }
 
     @Override
@@ -84,11 +76,10 @@ public class CollectionServiceImpl implements CollectionService {
         int adjustedPageNumber = pageNumber <= 0 ? 0 : pageNumber - 1;
 
         // Construct a new Pageable object with adjusted values
-        PageRequest pageable = PageRequest.of(adjustedPageNumber, adjustedPageSize);
 
         return authUtil.getUserName().flatMapMany( userName->
-                collectionRepository.findAllByOwner(userName)
-                        .skip((long) pageNumber * pageSize)
+                repository.findAllByOwner(userName)
+                        .skip((long) adjustedPageNumber * adjustedPageSize)
                         .take(pageSize));
 
     }

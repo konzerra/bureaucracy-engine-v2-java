@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record DocSaveDto(
+public record DocSaveInput(
 
         @NotNull
         String title,

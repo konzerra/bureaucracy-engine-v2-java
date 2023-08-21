@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-public record DocInfo(
-        String title,
-        String docId
-) {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class DocInfo {
+    private String docId;
+    private String title;
 }

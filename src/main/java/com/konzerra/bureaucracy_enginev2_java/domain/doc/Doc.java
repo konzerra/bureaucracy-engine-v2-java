@@ -28,6 +28,9 @@ public class Doc {
     @Builder.Default
     private String version = "";
 
+    @NotNull
+    private String owner;
+
     @Builder.Default
     private String collection = "";
 
@@ -53,9 +56,6 @@ public class Doc {
     @NotNull
     private List<DocInfo> previousVersions = Collections.emptyList();
 
-
-
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
@@ -64,6 +64,10 @@ public class Doc {
         private String heading;
         private String paragraph;
         private String note;
+    }
+
+    public void linkDoc(DocInfo linkedDoc){
+        this.attachedDocs.add(linkedDoc);
     }
 
 }

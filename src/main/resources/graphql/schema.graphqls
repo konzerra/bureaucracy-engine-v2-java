@@ -1,28 +1,9 @@
 scalar Date
+type Query{
 
-type Query
-
-type Mutation
-
-
-
-
-
-
-
-type JwtDetails {
-    userId: String!
-    email: String!
-    token: String!
-    issuedAt: String!
-    expiresAt: String!
-    roles: [String]!
 }
+type Mutation{
 
-type SignupInput{
-    name: String,
-    email: String,
-    password: String,
 }
 
 

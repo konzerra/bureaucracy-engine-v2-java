@@ -7,7 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record DocUpdateDto(
+public record DocUpdateInput(
+        @NotNull
+        String id,
         @NotNull
         String title,
         @NotNull

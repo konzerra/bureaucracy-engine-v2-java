@@ -6,8 +6,8 @@ import reactor.core.publisher.Mono;
 
 
 public interface CollectionMapper {
-    Mono<Collection> toModel(CollectionUpdateInput updateInput);
+    Mono<Collection> toUpdatedModel(Collection collection, CollectionUpdateInput updateInput);
 
-    Mono<Collection> toModel(CollectionSaveInput saveInput);
+    Mono<Collection> toModel(CollectionSaveInput saveInput, String userName);
 
 }
