@@ -28,6 +28,8 @@ public class OnStartUp implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        findOrCreateRole(RoleNames.ADMIN.getName()).subscribe();
+        findOrCreateRole(RoleNames.USER.getName()).subscribe();
         createUserOrDoNothing().subscribe();
     }
     private Mono<User> createUserOrDoNothing() {

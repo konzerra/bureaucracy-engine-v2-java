@@ -1,17 +1,18 @@
 package com.konzerra.bureaucracy_enginev2_java.domain.collection;
 
 
-import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionSaveDto;
+import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionSaveInput;
+import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionUpdateInput;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
 public interface CollectionService {
     // Save a new Collection
-    Mono<Collection> save(CollectionSaveDto saveDto);
+    Mono<Collection> save(CollectionSaveInput saveDto);
 
     // Update an existing Collection
-    Mono<Collection> update(Collection collection);
+    Mono<Collection> update(CollectionUpdateInput collection);
 
     // Delete a Collection by ID
     Mono<Void> deleteById(String id);

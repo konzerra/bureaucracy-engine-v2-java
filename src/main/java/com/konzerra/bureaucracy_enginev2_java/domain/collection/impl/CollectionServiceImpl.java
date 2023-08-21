@@ -2,9 +2,13 @@ package com.konzerra.bureaucracy_enginev2_java.domain.collection.impl;
 
 import com.konzerra.bureaucracy_enginev2_java.domain.auth.AuthUtil;
 import com.konzerra.bureaucracy_enginev2_java.domain.collection.Collection;
+import com.konzerra.bureaucracy_enginev2_java.domain.collection.CollectionMapper;
 import com.konzerra.bureaucracy_enginev2_java.domain.collection.CollectionRepository;
-import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionSaveDto;
+import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionSaveInput;
 import com.konzerra.bureaucracy_enginev2_java.domain.collection.CollectionService;
+import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionUpdateInput;
+import com.konzerra.bureaucracy_enginev2_java.exception.ApiException;
+import com.konzerra.bureaucracy_enginev2_java.exception.ErrorCode;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -18,13 +22,16 @@ public class CollectionServiceImpl implements CollectionService {
     private final CollectionRepository collectionRepository;
     private final AuthUtil authUtil;
 
-    public CollectionServiceImpl(CollectionRepository collectionRepository, AuthUtil authUtil) {
+    private final CollectionMapper mapper;
+
+    public CollectionServiceImpl(CollectionRepository collectionRepository, AuthUtil authUtil, CollectionMapper mapper) {
         this.collectionRepository = collectionRepository;
         this.authUtil = authUtil;
+        this.mapper = mapper;
     }
 
     @Override
-    public Mono<Collection> save(CollectionSaveDto saveDto) {
+    public Mono<Collection> save(CollectionSaveInput saveDto) {
         return authUtil.getUserName()
                 .flatMap(userName -> collectionRepository.save(new Collection(
                         null,
@@ -38,21 +45,29 @@ public class CollectionServiceImpl implements CollectionService {
 
 
     @Override
-    public Mono<Collection> update(Collection collection) {
-
-
-
-        return collectionRepository.save(collection);
+    public Mono<Collection> update(CollectionUpdateInput updateInput) {
+        return collectionRepository.findById(updateInput.id()).flatMap(collection -> {
+            return authUtil.isCurrentUser(collection.getOwner())
+                    .then(mapper.toModel(updateInput)
+                            .flatMap(collectionRepository::save)
+                            .switchIfEmpty(Mono.error(new ApiException("could not update", ErrorCode.UPDATE_FAILED)))
+                    );
+        });
     }
 
     @Override
     public Mono<Void> deleteById(String id) {
-        return collectionRepository.deleteById(id);
+        return collectionRepository.findById(id)
+                .flatMap(collection -> authUtil.isCurrentUser(collection.getOwner())
+                .then(collectionRepository.deleteById(id)));
     }
 
     @Override
     public Mono<Collection> findById(String id) {
-        return collectionRepository.findById(id);
+        return collectionRepository.findById(id)
+                .flatMap(collection -> authUtil.isCurrentUser(collection.getOwner())
+                        .then(Mono.just(collection))
+                );
     }
 
     @Override

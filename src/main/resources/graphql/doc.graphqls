@@ -1,0 +1,22 @@
+
+type Doc {
+    id: ID!
+    title: String!
+    version: String!
+    collection: String!
+    createdAt: String!
+    updatedAt: String!
+    content: [DocContent!]!
+    attachedDocs: [DocInfo!]!
+    previousVersions: [DocInfo!]!
+}
+
+type DocInfo {
+    title: String!
+    docId: String!
+}
+type DocContent {
+    heading: String!
+    paragraph: String!
+    note: String!
+}

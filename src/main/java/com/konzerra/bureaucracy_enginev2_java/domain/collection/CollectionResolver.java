@@ -1,6 +1,6 @@
 package com.konzerra.bureaucracy_enginev2_java.domain.collection;
 
-import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionSaveDto;
+import com.konzerra.bureaucracy_enginev2_java.domain.collection.dto.CollectionSaveInput;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Controller("/collection")
+@Controller
 public class CollectionResolver {
     private final CollectionService collectionService;
 
@@ -18,18 +18,20 @@ public class CollectionResolver {
     }
 
     @QueryMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public Flux<Collection> collections() {
         return collectionService.findAll();
     }
 
     @QueryMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public Flux<Collection> collectionsWithPagination(int pageSize, int pageNumber) {
         return collectionService.findAll(pageSize, pageNumber);
     }
 
     @MutationMapping
-    public Mono<Collection> saveCollection(@Argument CollectionSaveDto saveInput){
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public Mono<Collection> saveCollection(@Argument CollectionSaveInput saveInput){
         return collectionService.save(saveInput);
     }
 }

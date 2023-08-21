@@ -1,6 +1,12 @@
 
 extend type Query {
-    collections: [Collection]
+    collections: [Collection]!
+    collectionsWithPagination(pageSize: Int!, pageNumber: Int!): [Collection]!
+}
+
+extend type Mutation {
+    saveCollection(saveInput: CollectionSaveInput!): Collection!
+    updateCollection(updateInput: CollectionUpdateInput!):Collection!
 }
 
 type Collection {
@@ -9,5 +15,16 @@ type Collection {
     description: String!
     owner: String!
     docs: [DocInfo!]!
+}
+
+input CollectionSaveInput{
+    name: String!
+    description: String!
+}
+
+input CollectionUpdateInput{
+    id: String!
+    name: String!
+    description: String!
 }
 
